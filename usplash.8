@@ -1,0 +1,46 @@
+.TH usplash "8" "June 2006" Ubuntu
+.\"
+.SH NAME
+usplash \- userspace bootsplash daemon
+.\"
+.SH SYNOPSIS
+\fBusplash\fR [\fI-c\fR]
+.\"
+.SH DESCRIPTION
+Uses the framebuffer to provide a graphical bootsplash screen from
+userspace during system boot and shutdown.
+As well as a static image, the screen includes a progress bar and text
+updated by commands received from
+.BR usplash_write (8).
+.\"
+.SH OPTIONS
+.TP
+.B -c
+Causes \fBusplash\fR to switch to a new console (vt8) before displaying
+the splash screen, rather than writing over the current one.
+.\"
+.SH COMMANDS
+See
+.BR usplash_write (8)
+for a list of the commands that can be sent.
+.\"
+.SH AUTHOR
+Written by Matthew Garrett <mjg59@srcf.ucam.org>
+.\"
+.SH REPORTING BUGS
+Report bugs at
+.br
+http://launchpad.net/distros/ubuntu/+source/usplash/+filebug
+.\"
+.SH COPYRIGHT
+Copyright \(co 2006 Canonical Ltd.
+.br
+Copyright \(co 2006 Dennis Kaarsemaker <dennis@kaarsemaker.net>
+.br
+Copyright \(co 2005 Matthew Garrett <mjg59@srcf.ucam.org>
+
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.\"
+.SH SEE ALSO
+.BR usplash_write (8)

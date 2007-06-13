@@ -1,0 +1,105 @@
+.TH usplash_write "8" "February 2007" Ubuntu
+.\"
+.SH NAME
+usplash_write \- send commands to a running usplash daemon
+.\"
+.SH SYNOPSIS
+\fBusplash_write\fR \fICOMMAND\fR...
+.\"
+.SH DESCRIPTION
+Sends the given commands to a running usplash daemon.
+If no daemon is running,
+.B usplash_write
+returns without doing anything.
+.\"
+.SH COMMANDS
+.TP
+.BI QUIT
+Instructs the daemon to terminate, restoring the console that was
+previously active.
+.\"
+.TP
+.BI TIMEOUT " secs"
+Changes the number of seconds to wait for a command before exiting to
+that given.
+If zero is given it will wait forever.
+.\"
+.TP
+.BI CLEAR
+Clears any text currently displayed.
+.\"
+.TP
+.BI TEXT " text"
+Displays the given text in the area on the screen reserved for that,
+scrolling any existing text up.
+.\"
+.TP
+.BI TEXT\-URGENT " text"
+Displays the given text in the same way as TEXT above even if messages would
+normally be hidden due to the verbosity setting in effect.
+.\"
+.TP
+.BI STATUS " status"
+Displays the given status string to the right of the last line of text
+in the same colour.
+.\"
+.TP
+.BI SUCCESS " status"
+Displays the given status string to the right of the last line of text
+in a colour used to indicate success.
+.\"
+.TP
+.BI FAILURE " status"
+Displays the given status string to the right of the last line of text
+in a colour used to indicate failure.
+.\"
+.TP
+.BI PROGRESS " percentage"
+Update the progress bar to show that the given percentage (0-100) of the
+process has been completed.
+.\"
+.TP
+.BI PULSATE
+Set the progress bar to display a throbber (an indicator bouncing from left
+to right and back again).
+.\"
+.TP
+.BI INPUT " prompt"
+Displays the given prompt and waits for one line of user input.
+The line can then be read from /dev/.initramfs/usplash_outfifo within the
+timeout period.
+.\"
+.TP
+.BI INPUTQUIET " prompt"
+Works in the same way as INPUT above with the exception that the user input
+is not echoed to the console.
+Useful for password prompts.
+.\"
+.TP
+.BI INPUTENTER " prompt"
+Works in the same way as INPUT above with the exception that nothing is
+echoed to the console.
+Useful for "Press enter to reboot".
+.\"
+.SH EXIT STATUS
+.B usplash_write
+always returns an exit status of zero.
+.\"
+.SH AUTHOR
+Written by Matthew Garrett <mjg59@srcf.ucam.org>
+.\"
+.SH REPORTING BUGS
+Report bugs at
+.br
+http://launchpad.net/distros/ubuntu/+source/usplash/+filebug
+.\"
+.SH COPYRIGHT
+Copyright \(co 2006 Canonical Ltd.
+.br
+Copyright \(co 2005 Matthew Garrett <mjg59@srcf.ucam.org>
+
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.\"
+.SH SEE ALSO
+.BR usplash (8)

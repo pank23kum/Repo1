@@ -1,0 +1,87 @@
+#!/usr/bin/make -f
+# debian/rules for the usplash package.
+# Copyright © 2006 Canonical Ltd.
+# Author: Scott James Remnant <scott@ubuntu.com>
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DH_OPTIONS
+
+CFLAGS = -g -Wall
+
+# Disable optimisations if noopt found in $DEB_BUILD_OPTIONS
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -Os
+endif
+
+ifeq ($(DEB_HOST_ARCH), $(findstring $(DEB_HOST_ARCH),i386 amd64))
+	BACKEND = "BACKEND=svga"
+else
+	BACKEND =
+endif
+
+# Build the package
+build: build-stamp
+build-stamp:
+	dh_testdir
+
+	$(MAKE) $(BACKEND)
+
+	touch $@
+
+# Install files
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	# Ship initramfs hooks and scripts
+	install -d $(CURDIR)/debian/tmp/usr/share/initramfs-tools
+	cp -a initramfs/* $(CURDIR)/debian/tmp/usr/share/initramfs-tools 
+	chmod a+x $(CURDIR)/debian/tmp/usr/share/initramfs-tools/scripts/init-top/*
+
+binary: binary-indep binary-arch
+
+# Build architecture-independent files here.
+binary-indep:
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: DH_OPTIONS=-a
+binary-arch: build install
+	dh_install --sourcedir=debian/tmp
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs
+	dh_installexamples
+	dh_installman
+	dh_installinit -r --no-start -- start 98 2 3 4 5 . stop 01 0 1 6 .
+	dh_link
+	dh_strip
+	dh_compress -X example
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+
+# Clean up the mess we made
+clean:
+	dh_testdir
+	rm -f build-stamp
+
+	-$(MAKE) clean
+
+	dh_clean
+
+
+.PHONY: build install binary-indep binary-arch binary clean

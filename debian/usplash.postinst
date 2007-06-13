@@ -1,0 +1,80 @@
+#!/bin/bash -e
+# This script can be called in the following ways:
+#
+# After the package was installed:
+#       <postinst> configure <old-version>
+#
+#
+# If prerm fails during upgrade or fails on failed upgrade:
+#       <old-postinst> abort-upgrade <new-version>
+#
+# If prerm fails during deconfiguration of a package:
+#       <postinst> abort-deconfigure in-favour <new-package> <version>
+#                  removing <old-package> <version>
+#
+# If prerm fails during replacement due to conflict:
+#       <postinst> abort-remove in-favour <new-package> <version>
+
+. /usr/share/debconf/confmodule
+
+# Remove the alternative for the default artwork we used to ship
+rm_default_artwork()
+{
+    update-alternatives --remove usplash-artwork.so \
+	/usr/lib/usplash/usplash-default.so
+}
+
+# Update the initramfs
+update_initramfs()
+{
+    update-initramfs -u
+}
+
+# Write a config file
+setup_usplash_config()
+{
+    if [ ! -f /etc/usplash.conf ]; then
+	db_version 2.0
+	if  db_get xserver-xorg/config/display/modes; then
+	  FIRSTVAL=`echo $RET | sed 's/,.*//'`
+	  x=`echo $FIRSTVAL | sed 's/x.*//'`
+	  y=`echo $FIRSTVAL | sed 's/.*x//'`
+	else
+	  x=640;
+	  y=480;
+        fi
+	echo "# Usplash configuration file" >/etc/usplash.conf
+	echo "xres=$x" >>/etc/usplash.conf
+	echo "yres=$y" >>/etc/usplash.conf
+    fi
+}
+
+case "$1" in
+    configure)
+	if dpkg --compare-versions "$2" lt "0.3-1"; then
+	    rm_default_artwork
+	fi
+
+    if dpkg --compare-versions "$2" lt "0.4-31" && \
+		[ ! -e /usr/lib/usplash/usplash-artwork.so ]; then
+		update-alternatives --auto usplash-artwork.so
+    fi
+        
+
+	setup_usplash_config
+
+	update_initramfs
+	;;
+
+    abort-upgrade|abort-deconfigure|abort-remove)
+	;;
+
+    *)
+	echo "$0 called with unknown argument \`$1'" 1>&2
+	exit 1
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0

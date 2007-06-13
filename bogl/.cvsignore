@@ -1,0 +1,11 @@
+.depend
+bdftobogl
+giftobogl
+reduce-font
+pngtobogl
+bterm
+unifont-reduced.bdf
+unifont-reduced.bgf
+*.lo
+build-stamp
+libbogl.so.0.1

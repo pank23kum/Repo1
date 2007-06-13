@@ -1,0 +1,5 @@
+sbin/usplash
+sbin/usplash_write
+sbin/usplash_down
+usr/share/initramfs-tools/hooks/usplash
+usr/share/initramfs-tools/scripts/init-top/usplash

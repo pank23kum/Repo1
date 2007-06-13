@@ -1,0 +1,10 @@
+example-theme/Makefile
+example-theme/eft-theme.c
+example-theme/throbber_back.png
+example-theme/throbber_fore.png
+example-theme/README
+example-theme/eft_1024_768.png
+example-theme/helvB10.bdf
+example-theme/eft_800_600.png
+example-theme/eft_1024_576.png
+example-theme/eft_1024_576_cropped.png

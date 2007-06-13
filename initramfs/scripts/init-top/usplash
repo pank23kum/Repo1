@@ -27,7 +27,7 @@ for x in $(cat /proc/cmdline); do
 	quiet*)
 		VERBOSE=false
 		;;
-		esac
+	esac
 done
 
 if [ $SPLASH = "true" ]; then

@@ -1,6 +1,6 @@
 /* usplash
  *
- * Copyright © 2006 Canonical Ltd.
+ * Copyright © 2006, 2007 Canonical Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,5 +33,10 @@ void usplash_getdimensions(int *x, int *y);
 void usplash_put(int x, int y, void *pointer);
 void usplash_put_part(int x, int y, int w, int h, void *pointer, int x0,
 		      int y0);
+
+/* Defined in libusplash.c, but used by video backends */
+void usplash_restore_console(void);
+void usplash_save_font(void);
+void usplash_restore_font(void);
 
 #endif

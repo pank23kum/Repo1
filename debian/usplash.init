@@ -5,11 +5,13 @@
 # Required-Stop:     $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Stop and start usplash
-# Description: This script stops and starts the userspace bootsplash screen.
-#              On start it stops the usplash daemon and on stop it starts it.
-#              This is conter-intuitive, but usplash already got started in
-#              initramfs (early userspace).
+# Short-Description: Integrate usplash into the boot process
+# Description: This script deals with some awkward details of integrating
+#              the userspace bootsplash screen into the boot process. On
+#              start it stops the usplash daemon (counter-intuitive, but
+#              usplash was already started in the initramfs); on stop, it
+#              expects the display manager to have started the daemon with
+#              usplash_down, and merely resets the timeout.
 ### END INIT INFO
 # 
 # The usplash script makes sure that usplash exits at the end of 
@@ -83,12 +85,8 @@ case "$1" in
 	usplash_quit
 	;;
   stop)
-  	# only run with splash boot cmdline
-  	if [ -r /proc/cmdline ] && grep -q splash /proc/cmdline; then
-		usplash -c &
-		usplash_write "TEXT Resetting the usplash timeout..."
+	if grep -q splash /proc/cmdline; then
 		usplash_write "TIMEOUT 15"
-		usplash_write "SUCCESS ok"
 	fi
 	;;
   *)

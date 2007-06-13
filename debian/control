@@ -24,6 +24,7 @@ Description: userspace bootsplash library
  This package contains the runtime library for the usplash package.
 
 Package: libusplash-dev
+Section: libdevel
 Architecture: any
 Conflicts: usplash-dev
 Replaces: usplash-dev

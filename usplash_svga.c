@@ -138,6 +138,8 @@ int usplash_svga_init()
 
 	vga_setchipset(VESA);
 
+	usplash_save_font();
+
 	rc = vga_init();
 
 	if (rc) {

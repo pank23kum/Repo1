@@ -1,8 +1,15 @@
 /* usplash
  *
- * Copyright © 2006 Canonical Ltd.
+ * Copyright © 2006, 2007 Canonical Ltd.
  * Copyright © 2006 Dennis Kaarsemaker <dennis@kaarsemaker.net>
  * Copyright © 2005 Matthew Garrett <mjg59@srcf.ucam.org>
+ *
+ * Console font handling from kbd, whose COPYING file states:
+ *   Copyright (C) 1992 Rickard E. Faith.
+ *   Copyright (C) 1993 Risto Kankkunen.
+ *   Copyright (C) 1993 Eugene G. Crosser.
+ *   Copyright (C) 1994 H. Peter Anvin.
+ *   Copyright (C) 1994-1999 Andries E. Brouwer.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +34,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <linux/kd.h>
 
 #include <dlfcn.h>
 #include <errno.h>
@@ -51,8 +59,6 @@ sigset_t sigs;
 #define unblocksig() do{ sigprocmask(SIG_UNBLOCK, &sigs, NULL); } while(0)
 
 /* Prototypes of non-static functions */
-void ensure_console(void);
-
 void switch_console(int vt, int vt_fd);
 
 void clear_screen(void);
@@ -65,12 +71,17 @@ void draw_text(const char *string, size_t len);
 void draw_status(const char *string, size_t len, int mode);
 int handle_input(const char *string, size_t len, int quiet);
 
+/* Helpers for video implementations */
+void usplash_restore_console(void);
+void usplash_save_font(void);
+void usplash_restore_font(void);
+
 /* Prototypes of static functions */
+static void ensure_console(void);
+static int get_font(int *width, int *height, int *count, unsigned char *buf);
+static int set_font(int width, int height, int count, unsigned char *buf);
 static void draw_newline(void);
 static void draw_chars(const char *string, size_t len);
-
-/* Non-static so that svgalib can call it. Damned svgalib. */
-void usplash_restore_console(void);
 
 /* Default theme, used when no suitable alternative can be found */
 extern struct usplash_theme testcard_theme;
@@ -96,6 +107,14 @@ static int saved_vt_fd = -1;
 
 /* Virtual terminal we switched to */
 static int new_vt = 0;
+
+/* Saved console font */
+static struct {
+	int width;
+	int height;
+	int charcount;
+	char *data;
+} saved_font = { 0, 0, 0, NULL };
 
 /* Number of seconds to wait for a command before exiting */
 static int timeout = 15;
@@ -287,6 +306,124 @@ void usplash_restore_console(void)
 		if (state.v_active == new_vt)
 			switch_console(saved_vt, saved_vt_fd);
 	}
+}
+
+/* introduced in Linux 2.1.111 */
+#ifndef KDFONTOP
+#define KDFONTOP 0x4B72
+struct console_font_op {
+	unsigned int op;
+	unsigned int flags;
+	unsigned int width, height;
+	unsigned int charcount;
+	unsigned char *data;
+};
+
+#define KD_FONT_OP_SET 0
+#define KD_FONT_OP_GET 1
+#endif /* KDFONTOP */
+
+/* may be called with buf==NULL if we only want info */
+int get_font(int *width, int *height, int *count, unsigned char *buf)
+{
+	struct console_font_op cfo;
+
+	ensure_console();
+
+	cfo.op = KD_FONT_OP_GET;
+	cfo.flags = 0;
+	cfo.width = cfo.height = 32;
+	cfo.charcount = *count;
+	cfo.data = buf;
+	if (ioctl(console_fd, KDFONTOP, &cfo) == 0) {
+		*count = cfo.charcount;
+		if (height)
+			*height = cfo.height;
+		if (width)
+			*width = cfo.width;
+		return 0;
+	}
+
+	/* don't bother supporting older font ioctls (GIO_FONTX, GIO_FONT);
+	 * usplash is vanishingly unlikely to be used on such old kernels
+	 */
+	fprintf(stderr, "usplash: can't get console font: %s\n",
+		strerror(errno));
+	return -1;
+}
+
+int set_font(int width, int height, int count, unsigned char *buf)
+{
+	struct console_font_op cfo;
+
+	ensure_console();
+
+	cfo.op = KD_FONT_OP_SET;
+	cfo.flags = 0;
+	cfo.width = width;
+	cfo.height = height;
+	cfo.charcount = count;
+	cfo.data = buf;
+	if (ioctl(console_fd, KDFONTOP, &cfo) == 0)
+		return 0;
+	/* if the count is not 256 or 512, round up and try again */
+	if (errno == EINVAL && width == 8 && count != 256 && count < 512) {
+		int ct = ((count > 256) ? 512 : 256);
+		char *mybuf = malloc(32 * ct);
+		int ret;
+
+		if (!mybuf) {
+			fprintf(stderr, "usplash: out of memory\n");
+			return -1;
+		}
+		memset(mybuf, 0, 32 * ct);
+		memcpy(mybuf, buf, 32 * count);
+		cfo.data = mybuf;
+		cfo.charcount = ct;
+		ret = ioctl(console_fd, KDFONTOP, &cfo);
+		free(mybuf);
+		if (ret == 0)
+			return 0;
+	}
+
+	/* don't bother supporting older font ioctls (PIO_FONTX, PIO_FONT);
+	 * usplash is vanishingly unlikely to be used on such old kernels
+	 */
+	fprintf(stderr, "usplash: can't set console font: %s\n",
+		strerror(errno));
+	return -1;
+}
+
+void usplash_save_font(void)
+{
+	int width, height, count = 0;
+	int size;
+	unsigned char *data;
+
+	if (get_font(&width, &height, &count, NULL) != 0 || count == 0)
+		return;
+	/* size calculation from linux/drivers/char/vt.c:con_font_get() */
+	size = (width + 7) / 8 * 32 * count;
+	data = malloc(size);
+	if (!data) {
+		fprintf(stderr, "usplash: out of memory\n");
+		return;
+	}
+	if (get_font(&width, &height, &count, data) != 0)
+		return;
+
+	saved_font.width = width;
+	saved_font.height = height;
+	saved_font.charcount = count;
+	saved_font.data = data;
+}
+
+void usplash_restore_font(void)
+{
+	if (!saved_font.data)
+		return;
+	set_font(saved_font.width, saved_font.height,
+		 saved_font.charcount, saved_font.data);
 }
 
 int usplash_setup(int xres, int yres, int v)

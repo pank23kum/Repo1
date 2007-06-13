@@ -1333,6 +1333,7 @@ static void restoretextmode(void)
 
     ioctl(__svgalib_tty_fd, KDSETMODE, KD_TEXT);
     ioctl(__svgalib_tty_fd, VT_SETMODE, &__svgalib_oldvtmode);
+    usplash_restore_font();
 }
 
 static void idle_accel(void) {

@@ -4,7 +4,7 @@
 usplash \- userspace bootsplash daemon
 .\"
 .SH SYNOPSIS
-\fBusplash\fR [\fI-c\fR]
+\fBusplash\fR [\fB-c\fR] [\fB-v\fR] [\fB-x\fR \fInum\fR] [\fB-y\fR \fInum\fR]
 .\"
 .SH DESCRIPTION
 Uses the framebuffer to provide a graphical bootsplash screen from
@@ -18,6 +18,18 @@ updated by commands received from
 .B -c
 Causes \fBusplash\fR to switch to a new console (vt8) before displaying
 the splash screen, rather than writing over the current one.
+.TP
+.B -v
+Put usplash into verbose mode where more messages will be shown.
+Without this flag only urgent messages will be displayed.
+.TP
+.BI -x " num"
+Set the x-axis resolution to use for the splash screen to
+.IR num .
+.TP
+.BI -y " num"
+Set the y-axis resolution to use for the splash screen to
+.IR num .
 .\"
 .SH COMMANDS
 See

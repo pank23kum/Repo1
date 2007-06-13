@@ -31,7 +31,6 @@ void draw_line(const char *string, size_t len);
 void draw_status(const char *string, size_t len, int mode);
 void animate_step(int pulsating);
 int usplash_setup(int xres, int yres, int verbose);
-void usplash_restore_console(void);
 int strncspn(const char *s, size_t n, const char *reject);
 int handle_input(const char *string, size_t len, int quiet);
 int usplash_get_string (char *buf, int length, int quiet);

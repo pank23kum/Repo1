@@ -30,7 +30,9 @@
 # Update the initramfs
 update_initramfs()
 {
-    update-initramfs -u
+	if which update-initramfs >/dev/null 2>&1; then
+		update-initramfs -u
+	fi
 }
 
 
@@ -40,7 +42,7 @@ case "$1" in
 	;;
 
     purge)
-        rm /etc/usplash.conf
+	rm -f /etc/usplash.conf
 	;;
     upgrade|failed-upgrade|disappear|abort-install|abort-upgrade)
 	;;

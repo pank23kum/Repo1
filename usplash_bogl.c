@@ -46,6 +46,7 @@ int usplash_bogl_getfontwidth(char c)
 int usplash_bogl_init()
 {
 	int i;
+	usplash_save_font();
 	if (!bogl_init()) {
 		fprintf(stderr, "bogl_init failed: %s\n", bogl_error());
 		return 1;
@@ -61,6 +62,7 @@ int usplash_bogl_init()
 void usplash_bogl_done()
 {
 	bogl_done();
+	usplash_restore_font();
 }
 
 int usplash_bogl_set_resolution(int xres, int yres)

@@ -1,5 +1,7 @@
 sbin/usplash
 sbin/usplash_write
 sbin/usplash_down
+usr/sbin/update-usplash-theme
 usr/share/initramfs-tools/hooks/usplash
 usr/share/initramfs-tools/scripts/init-top/usplash
+../usplash.py /usr/share/apport/package-hooks/

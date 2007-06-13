@@ -33,13 +33,15 @@ all: $(BACKEND_dir) $(TARGETS)
 libusplash_OBJECTS = libusplash.o usplash-testcard.o usplash-testcard-theme.o $(usplash_BACKEND) bogl/helvB10.o
 usplash_LIBS = 
 
-usplash: libusplash.so.0 usplash.c
+usplash: libusplash.so usplash.c
 	$(COMPILE) -c usplash.c -o usplash.o
 	$(LINK) -o $@ usplash.o -L. -lusplash
 
 libusplash.so.0: $(libusplash_OBJECTS) $(usplash_BACKEND_LIBS)
 	$(CC) -Wl,-soname=$@ -shared -o $@ $^ $(usplash_BACKEND_LDFLAGS)
-	ln -s $@ libusplash.so
+
+libusplash.so: libusplash.so.0
+	ln -sf $< $@
 
 usplash_write_OBJECTS = usplash_write.o
 
@@ -64,10 +66,11 @@ svgalib:
 
 
 install:
-	$(INSTALL) -d $(DESTDIR)/sbin $(DESTDIR)/lib $(DESTDIR)/usr/include $(DESTDIR)/usr/bin
+	$(INSTALL) -d $(DESTDIR)/sbin $(DESTDIR)/usr/sbin $(DESTDIR)/lib $(DESTDIR)/usr/include $(DESTDIR)/usr/bin
 	$(INSTALL_PROGRAM) usplash $(DESTDIR)/sbin
 	$(INSTALL_PROGRAM) usplash_write $(DESTDIR)/sbin
 	$(INSTALL_PROGRAM) usplash_down $(DESTDIR)/sbin
+	$(INSTALL_PROGRAM) update-usplash-theme $(DESTDIR)/usr/sbin
 	$(INSTALL_PROGRAM) libusplash.so.0 $(DESTDIR)/lib/libusplash.so.0
 	ln -sf /lib/libusplash.so.0 $(DESTDIR)/lib/libusplash.so
 	$(INSTALL_PROGRAM) bogl/pngtobogl $(DESTDIR)/usr/bin/pngtousplash

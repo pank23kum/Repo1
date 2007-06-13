@@ -1,4 +1,18 @@
 #! /bin/sh
+### BEGIN INIT INFO
+# Provides:          usplash
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Integrate usplash into the boot process
+# Description: This script deals with some awkward details of integrating
+#              the userspace bootsplash screen into the boot process. On
+#              start it stops the usplash daemon (counter-intuitive, but
+#              usplash was already started in the initramfs); on stop, it
+#              expects the display manager to have started the daemon with
+#              usplash_down, and merely resets the timeout.
+### END INIT INFO
 # 
 # The usplash script makes sure that usplash exits at the end of 
 # the boot sequence and re-run the console-screen.sh script to make
@@ -71,7 +85,9 @@ case "$1" in
 	usplash_quit
 	;;
   stop)
-	usplash_write "TIMEOUT 15"
+	if grep -q splash /proc/cmdline; then
+		usplash_write "TIMEOUT 15"
+	fi
 	;;
   *)
 	N=/etc/init.d/$NAME

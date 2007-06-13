@@ -1,8 +1,53 @@
-usplash (0.4-44) UNRELEASED; urgency=low
+usplash (0.5.2) gutsy; urgency=low
 
+  * Don't break on purge if /etc/usplash.conf doesn't exist (e.g. usplash
+    didn't get properly configured).
+  * ensure_console doesn't need to be part of libusplash's ABI; don't export
+    it.
+  * Save the console font before switching to graphics mode, and restore it
+    when switching back to text mode (LP: #91422).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Mon, 04 Jun 2007 10:43:03 +0100
+
+usplash (0.5.1) gutsy; urgency=low
+
+  * Fix postinst upgrade checks to avoid triggering on fresh installs.
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Thu, 31 May 2007 22:59:31 +0100
+
+usplash (0.5.0) gutsy; urgency=low
+
+  * Add an update-usplash-theme script to do the necessary
+    update-alternatives and update-initramfs in one shot.
+  * Merge from Debian:
+    - debian/control: Fix section of libusplash-dev.
+    - debian/copyright: Add notice about .bdf files.
+    - Only run on stop with splash boot argument.
+    - debian/usplash.init: Add dependency info (Petter Reinholdtsen);
+      adjusted for Ubuntu.
+    - debian/usplash.postinst, debian/usplash.postrm: Check if
+      update-initramfs is really installed.
+  * Arbitrary version bump to override version 0.4-43-3 which accidentally
+    got synced into gutsy, and switch to a native versioning scheme while
+    we're at it (LP: #113780).
+  * usplash.8: Document -v, -x, and -y options (thanks, James Westby;
+    LP: #107537).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Fri, 11 May 2007 09:50:20 +0200
+
+usplash (0.4-44) feisty; urgency=low
+
+  [ Colin Watson ]
   * Add XS-Vcs-Bzr field to debian/control.
 
- -- Colin Watson <cjwatson@ubuntu.com>  Wed,  7 Mar 2007 09:54:36 +0000
+  [ Martin Pitt ]
+  * add debian/usplash.py: Apport package hook to check whether a crash
+    happened in run_vm86(), which means a crash in the BIOS. We do not want
+    crash reports about those, because they are useless. (LP: #94911)
+  * debian/usplash.install: Install that hook into
+    /usr/share/apport/package-hooks/.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon,  2 Apr 2007 15:04:31 +0200
 
 usplash (0.4-43) feisty; urgency=low
 

@@ -30,7 +30,9 @@
 # Update the initramfs
 update_initramfs()
 {
-    update-initramfs -u
+	if [ -x /usr/sbin/update-initramfs ]; then
+		update-initramfs -u
+	fi
 }
 
 

@@ -45,6 +45,17 @@ install: build
 	install -d $(CURDIR)/debian/tmp/usr/share/initramfs-tools
 	cp -a initramfs/* $(CURDIR)/debian/tmp/usr/share/initramfs-tools 
 	chmod a+x $(CURDIR)/debian/tmp/usr/share/initramfs-tools/scripts/init-top/*
+	install -d $(CURDIR)/debian/usplash/etc/console-tools/config.d
+	install -d $(CURDIR)/debian/usplash/etc/kbd/config.d
+	echo "pidof usplash && exit 0" > $(CURDIR)/debian/usplash/etc/console-tools/config.d/usplash
+	chmod a+x $(CURDIR)/debian/usplash/etc/console-tools/config.d/usplash
+	echo "pidof usplash && exit 0" > $(CURDIR)/debian/usplash/etc/kbd/config.d/usplash
+	chmod a+x $(CURDIR)/debian/usplash/etc/kbd/config.d/usplash
+	install $(CURDIR)/debian/lsb-base-logging-ubuntu.sh \
+		$(CURDIR)/debian/usplash/etc/lsb-base-logging.sh
+	install -d $(CURDIR)/debian/usplash/usr/share/lintian/overrides
+	install -m 0644 $(CURDIR)/debian/usplash.lintian \
+	$(CURDIR)/debian/usplash/usr/share/lintian/overrides/usplash
 
 binary: binary-indep binary-arch
 

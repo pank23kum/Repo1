@@ -1,4 +1,16 @@
 #! /bin/sh
+### BEGIN INIT INFO
+# Provides:          usplash
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Stop and start usplash
+# Description: This script stops and starts the userspace bootsplash screen.
+#              On start it stops the usplash daemon and on stop it starts it.
+#              This is conter-intuitive, but usplash already got started in
+#              initramfs (early userspace).
+### END INIT INFO
 # 
 # The usplash script makes sure that usplash exits at the end of 
 # the boot sequence and re-run the console-screen.sh script to make
@@ -71,7 +83,13 @@ case "$1" in
 	usplash_quit
 	;;
   stop)
-	usplash_write "TIMEOUT 15"
+  	# only run with splash boot cmdline
+  	if [ -r /proc/cmdline ] && grep -q splash /proc/cmdline; then
+		usplash -c &
+		usplash_write "TEXT Resetting the usplash timeout..."
+		usplash_write "TIMEOUT 15"
+		usplash_write "SUCCESS ok"
+	fi
 	;;
   *)
 	N=/etc/init.d/$NAME

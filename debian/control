@@ -1,14 +1,15 @@
 Source: usplash
 Priority: optional
 Section: misc
-Maintainer: Matthew Garrett <mjg59@srcf.ucam.org>
-Standards-Version: 3.6.2.1
+Maintainer: maximilian attems <maks@debian.org>
+Uploaders: Petter Reinholdtsen <pere@debian.org>, Otavio Salvador <otavio@debian.org>,  David Härdeman <david@hardeman.nu>
+Standards-Version: 3.7.2.0
 Build-Depends: debhelper (>= 5.0.0), libgd2-dev, libpng-dev, libx86-dev [amd64 i386]
 XS-Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/usplash/ubuntu
 
 Package: usplash
 Architecture: any
-Depends: ${shlibs:Depends}, debconf (>= 0.5) | debconf-2.0, initramfs-tools (>= 0.40ubuntu30)
+Depends: ${shlibs:Depends}, debconf (>= 0.5) | debconf-2.0, initramfs-tools (>= 0.71), usplash-theme-debian | usplash-theme
 Description: Userspace bootsplash utility
  Usplash is a userspace application that uses the Linux framebuffer interface
  to draw a splash screen at boot. It has a companion utility that is able to
@@ -26,6 +27,7 @@ Package: libusplash-dev
 Architecture: any
 Conflicts: usplash-dev
 Replaces: usplash-dev
+Section: libdevel
 Depends: ${shlibs:Depends}, libusplash0 (= ${source:Version})
 Description: Theming support files for usplash
  This package contains everything you need to make a usplash theme,

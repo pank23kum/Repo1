@@ -1,0 +1,2 @@
+usplash: executable-not-elf-or-script ./etc/lsb-base-logging.sh
+usplash: sharedobject-in-library-directory-not-actually-a-shlib lib/libusplash.so.0

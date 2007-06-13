@@ -1,0 +1,111 @@
+usplash (0.4-43-3) unstable; urgency=low
+
+  * debian/control: Fix section of libusplash-dev.
+    Mirror active Maintainers and Uploaders from usplash-theme-debian.
+    Replaces and Provides bootsplash. (closes: #422761)
+  * lsb-base-logging.sh: Fix log_action_end_msg return code to be consistent
+    with lsb-base. Thanks martin f krafft <madduck@debian.org> for patch.
+    (closes: #422624)
+  * initramfs/scripts/init-top/usplash: Disable splash too on single bootarg.
+
+ -- maximilian attems <maks@debian.org>  Tue, 08 May 2007 14:20:50 +0200
+
+usplash (0.4-43-2) unstable; urgency=low
+
+  * initramfs/scripts/init-top/usplash: Enable splash by default on
+    installation - patch by David Härdeman. (closes: #397954, #383327)
+  * debian/control: Add usplash-theme-debian | usplash-theme depends
+    for usplash auto-installed theme.
+
+ -- maximilian attems <maks@debian.org>  Mon, 07 May 2007 18:13:03 +0200
+
+usplash (0.4-43-1) unstable; urgency=low
+
+  [ maximilian attems ]
+  Release overlong fun duty
+
+  * new upstream release (svga i386, theming support, input, packaging)
+    drop all merged patches plus quilt rules, also the 04-bogl-dpkg-arg.patch,
+    as you neeed newer debhelper than sarge version. It no longer leaves
+    /var/lib/usplash around.  (closes: 380750, 383249, 397970, 382675)
+  * Add lintian override for libusplash.so.0
+  * Be vendor neutral in an ubuntu called lsb script. (closes: 384812)
+  * debian/usplash.init: Add dep info. (closes: 386349)
+    Thanks Petter Reinholdtsen <pere@hungry.com>
+  * debian/usplash.init: Only run on stop with splash bootarg.
+  * debian/control: Remove dependency on policycoreutils.
+  * usplash-theme.h: Add input patch from David.
+
+  [ Otavio Salvador ]
+  * Change package to non-native;
+  * Revert a usplash-theme.h change that isn't supported on the current
+    code;
+  * Avoid console-tools and kbd starting when usplash is running;
+  * Add myself on uploaders.
+
+ -- Otavio Salvador <otavio@debian.org>  Thu, 15 Mar 2007 15:51:15 -0300
+
+usplash (0.3e) unstable; urgency=low
+
+  * Add 05-usplash_write-quiet.patch from Petter Reinholdtsen
+    <pere@hungry.com>. Gets rid of error messages on splash=false boots.
+
+ -- maximilian attems <maks@sternwelten.at>  Fri,  4 Aug 2006 10:04:59 +0200
+
+usplash (0.3d) unstable; urgency=low
+
+  * Add 03-bogl-no-PAGESIZE.patch to the patches/series file to really fix
+    the powerpc ftbfs.
+  * bogl/Makefile: Ease sarge backports, build with DEB_BUILD_ARCH in
+    04-blog-dpkg-arg.patch. Thanks Petter Reinholdtsen <pere@hungry.com>.
+    (closes: 380745)
+  * debian/usplash.init: Workaround missing ubuntu gdm patches. Call usplash
+    in init stop. Thanks Petter Reinholdtsen <pere@hungry.com>.
+    (closes: 381009)
+
+ -- maximilian attems <maks@sternwelten.at>  Wed,  2 Aug 2006 09:28:22 +0200
+
+usplash (0.3c) unstable; urgency=low
+  * debian/usplash.postinst: Readd rm_default_artwork for migration from ubuntu.
+  * Add 03-bogl-no-PAGESIZE.patch. (closes: 380618)
+
+ -- maximilian attems <maks@sternwelten.at>  Mon, 31 Jul 2006 23:56:26 +0200
+
+usplash (0.3b) unstable; urgency=low
+
+  * debian/copyright: Add notice about .bdf files.
+
+ -- maximilian attems <maks@sternwelten.at>  Sun, 30 Jul 2006 21:50:42 +0200
+
+usplash (0.3a) unstable; urgency=low
+
+  [ Petter Reinholdtsen ]
+  * Initial upload to Debian (Closes: #356193)
+  * usplash_write.c: Fix typo in fifo write code, 00-ssize-typo.patch.
+  * usplash.c: Improve error messages when usplash fail to start,
+    01-bogl-error.patch.
+  * usplash.h: Improve comment for USPLASH_FIFO, 02-header-comment.patch.
+  * Make sure postrm call update-rc.d to remove the init.d script.
+
+  [ maximilian attems ]
+  * Add the Debian kernel team as Maintainer. Petter and myself as Uploaders.
+  * Add versioned dependency to initramfs-tools 0.72, which adds the fb boot
+    scripts.
+  * Standards-Version 3.7.2.0 without needed changes.
+  * debian/copyright: Add pointer to latest Ubuntu release, small rephrasing.
+  * Use a Debian version string, as there is no separate archive.
+  * debian/usplash.postinst: Check if update-initramfs is really installed.
+    Remove old unused rm_default_artwork().
+  * debian/usplash.postrm: Check if update-initramfs is really installed.
+  * debian/patches: Split out Petter's changes as patches.
+  * debian/rules: Add quilt handling for the patches.
+  * debian/control: Add quilt build dependency.
+  * .bzr, bogl/.cvsignore: Remove version control stuff in source package.
+  * Add lsb-base-logging-ubuntu.sh from ubuntu lsb (3.1-10ubuntu2).
+  * debian/rules: Install lsb-base-logging.sh.
+  * usplash.lintian: Add lintian override for /etc/lsb-base-logging.sh,
+    Debian lsb-base allows to set there the lsb functions.
+  * debian/rules: Install lintian override.
+  * debian/control: Provides bootsplash as discussed with otavio.
+
+ -- maximilian attems <maks@sternwelten.at>  Sat, 29 Jul 2006 17:16:04 +0200

@@ -3,6 +3,7 @@ usplash (0.5.2-1) UNRELEASED; urgency=low
   * New upstream release.
   * debian/control:
     - Change libgd2-dev build-dependency to libgd2-noxpm-dev;
+    - Change libusplash0 dependency to make it bin-NMU friendly;
 
  -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 13 Jun 2007 11:32:33 -0300
 

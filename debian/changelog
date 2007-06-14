@@ -5,6 +5,8 @@ usplash (0.5.2-1) UNRELEASED; urgency=low
     - Change libgd2-dev build-dependency to libgd2-noxpm-dev;
     - Change libusplash0 dependency to make it bin-NMU friendly;
     - Remove a duplicate entry of section field at libusplash-dev;
+  * debian/lsb-base-logging-ubuntu.sh: Add a hack while we don't migrate
+    to the proposed splash methods to avoid to patch KDM and GDM.
 
  -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 13 Jun 2007 11:32:33 -0300
 

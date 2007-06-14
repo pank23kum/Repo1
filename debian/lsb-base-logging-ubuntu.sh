@@ -49,6 +49,13 @@ log_daemon_msg () {
         return 1
     fi
 
+    # HACK! If usplash is running when GDM/KDM starts the terminal
+    # gets crazy. Enforce usplash ends before running GDM/KDM. (yes,
+    # start kills it)
+    if [ "$2" = "gdm" ] || [ "$2" = "kdm" ]; then
+        DO_NOT_SWITCH_VT=yes /etc/init.d/usplash start
+    fi
+
     if log_use_usplash; then
         usplash_write "TEXT $*" || true
     fi

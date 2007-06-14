@@ -1,6 +1,8 @@
 usplash (0.5.2-1) UNRELEASED; urgency=low
 
   * New upstream release.
+  * debian/control:
+    - Change libgd2-dev build-dependency to libgd2-noxpm-dev;
 
  -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 13 Jun 2007 11:32:33 -0300
 

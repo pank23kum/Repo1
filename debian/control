@@ -4,7 +4,7 @@ Section: misc
 Maintainer: maximilian attems <maks@debian.org>
 Uploaders: Petter Reinholdtsen <pere@debian.org>, Otavio Salvador <otavio@debian.org>,  David Härdeman <david@hardeman.nu>
 Standards-Version: 3.7.2.0
-Build-Depends: debhelper (>= 5.0.0), libgd2-dev, libpng-dev, libx86-dev [amd64 i386]
+Build-Depends: debhelper (>= 5.0.0), libgd2-noxpm-dev, libpng-dev, libx86-dev [amd64 i386]
 XS-Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/usplash/ubuntu
 
 Package: usplash

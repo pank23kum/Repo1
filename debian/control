@@ -28,7 +28,6 @@ Section: libdevel
 Architecture: any
 Conflicts: usplash-dev
 Replaces: usplash-dev
-Section: libdevel
 Depends: ${shlibs:Depends}, libusplash0 (= ${binary:Version})
 Description: Theming support files for usplash
  This package contains everything you need to make a usplash theme,

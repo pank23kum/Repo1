@@ -1,4 +1,4 @@
-usplash (0.5.2-1) UNRELEASED; urgency=low
+usplash (0.5.2-1) unstable; urgency=low
 
   * New upstream release.
   * debian/control:
@@ -8,7 +8,7 @@ usplash (0.5.2-1) UNRELEASED; urgency=low
   * debian/lsb-base-logging-ubuntu.sh: Add a hack while we don't migrate
     to the proposed splash methods to avoid to patch KDM and GDM.
 
- -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 13 Jun 2007 11:32:33 -0300
+ -- Otavio Salvador <otavio@ossystems.com.br>  Sun, 17 Jun 2007 18:02:06 -0300
 
 usplash (0.4-43-3) unstable; urgency=low
 

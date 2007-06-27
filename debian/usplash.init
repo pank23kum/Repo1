@@ -51,7 +51,7 @@ usplash_quit() {
 	else
 	    CONSOLE_SCREEN=
 	fi
-	if type usplash >/dev/null 2>&1 && grep -q splash /proc/cmdline &&
+	if type usplash >/dev/null 2>&1 &&
            ( pidof usplash > /dev/null || [ "$(fgconsole 2>/dev/null)" = "8" ] ); then
 	   	# Clear VT 8 of any console messages
 		clear >/dev/tty8

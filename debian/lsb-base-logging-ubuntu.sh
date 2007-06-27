@@ -7,14 +7,14 @@ log_use_usplash () {
 
 log_success_msg () {
     if log_use_usplash; then
-        usplash_write "STATUS $*" || true
+        usplash_write "TEXT $*" || true
     fi
     echo " * $@"
 }
 
 log_failure_msg () {
     if log_use_usplash; then
-        usplash_write "STATUS $*" || true
+        usplash_write "TEXT $*" || true
     fi
 
     if log_use_fancy_output; then
@@ -28,7 +28,7 @@ log_failure_msg () {
 
 log_warning_msg () {
     if log_use_usplash; then
-        usplash_write "STATUS $*" || true
+        usplash_write "TEXT $*" || true
     fi
 
     if log_use_fancy_output; then

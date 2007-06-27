@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 	 * The case of usplash terminating normally is already handled
 	 * in the init script with an explicit chvt.
 	 */
-//      usplash_restore_console ();
+	usplash_restore_console ();
 	return ret;
 }
 

@@ -90,7 +90,7 @@ clean:
 	dh_testdir
 	rm -f build-stamp
 
-	-$(MAKE) clean
+	$(MAKE) clean
 
 	dh_clean
 

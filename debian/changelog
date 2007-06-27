@@ -1,4 +1,4 @@
-usplash (0.5.2-2) UNRELEASED; urgency=low
+cusplash (0.5.2-2) UNRELEASED; urgency=low
 
   * Use usplash_write TEXT on lsb_{sucess,failure,warning}
     methods. Thanks to "David Härdeman" <david@hardeman.nu>
@@ -9,8 +9,9 @@ usplash (0.5.2-2) UNRELEASED; urgency=low
     <david@hardeman.nu> for the patch. (closes: #387640)
   * Fix link to libusplash.so.0 to avoid dpkg-shlibdeps confusion. Thanks
     to Michael Biebl <biebl@debian.org> for the patch. (closes: #424731)
+  * Don't ignore clean errors.
 
- -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 27 Jun 2007 11:11:59 -0300
+ -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 27 Jun 2007 11:18:22 -0300
 
 usplash (0.5.2-1) unstable; urgency=low
 

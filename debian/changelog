@@ -3,7 +3,7 @@ usplash (0.5.2-3) UNRELEASED; urgency=low
   * Add XS-Vcs-{Git,Browser} fields and drop XS-Vcs-Bzr one.
   * Add a watch file to make easier to follow Ubuntu updates.
   * Do not check for kernel param on usplash_quit method. Thanks to Geert
-    Stappers <stappers@stappers.nl> for the patch. (closes: #429621)
+    Stappers <stappers@stappers.nl> for the patch. (closes: #429621, #422920)
 
  -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 27 Jun 2007 11:49:39 -0300
 

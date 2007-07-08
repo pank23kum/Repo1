@@ -4,8 +4,9 @@ usplash (0.5.2-3) UNRELEASED; urgency=low
   * Add a watch file to make easier to follow Ubuntu updates.
   * Do not check for kernel param on usplash_quit method. Thanks to Geert
     Stappers <stappers@stappers.nl> for the patch. (closes: #429621, #422920)
+  * Restrict the architecture building to: amd64, i386, ppc, sparc
 
- -- Otavio Salvador <otavio@ossystems.com.br>  Wed, 27 Jun 2007 11:49:39 -0300
+ -- Otavio Salvador <otavio@ossystems.com.br>  Sun, 08 Jul 2007 19:32:22 -0300
 
 usplash (0.5.2-2) unstable; urgency=low
 

@@ -1,4 +1,4 @@
-nSource: usplash
+Source: usplash
 Priority: optional
 Section: misc
 Maintainer: maximilian attems <maks@debian.org>
@@ -9,7 +9,7 @@ XS-Vcs-Git: git://git.debian.org/git/collab-maint/usplash.git
 XS-Vcs-Browser: http://git.debian.org/?p=collab-maint/usplash.git
 
 Package: usplash
-Architecture: amd64, i386, ppc, sparc
+Architecture: amd64 i386 powerpc sparc
 Depends: ${shlibs:Depends}, debconf (>= 0.5) | debconf-2.0, initramfs-tools (>= 0.71), usplash-theme-debian | usplash-theme
 Description: Userspace bootsplash utility
  Usplash is a userspace application that uses the Linux framebuffer interface
@@ -18,7 +18,7 @@ Description: Userspace bootsplash utility
  be displayed in a more attractive way.
 
 Package: libusplash0
-Architecture: amd64, i386, ppc, sparc
+Architecture: amd64 i386 powerpc sparc
 Depends: ${shlibs:Depends}
 Replaces: usplash (<< 0.4-40)
 Description: userspace bootsplash library
@@ -26,11 +26,10 @@ Description: userspace bootsplash library
 
 Package: libusplash-dev
 Section: libdevel
-Architecture: amd64, i386, ppc, sparc
+Architecture: amd64 i386 powerpc sparc
 Conflicts: usplash-dev
 Replaces: usplash-dev
 Depends: ${shlibs:Depends}, libusplash0 (= ${binary:Version})
 Description: Theming support files for usplash
  This package contains everything you need to make a usplash theme,
  including an example
-

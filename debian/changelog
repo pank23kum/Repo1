@@ -1,4 +1,4 @@
-usplash (0.5.2-3) UNRELEASED; urgency=low
+usplash (0.5.2-3) unstable; urgency=low
 
   * Add XS-Vcs-{Git,Browser} fields and drop XS-Vcs-Bzr one.
   * Add a watch file to make easier to follow Ubuntu updates.
@@ -6,7 +6,7 @@ usplash (0.5.2-3) UNRELEASED; urgency=low
     Stappers <stappers@stappers.nl> for the patch. (closes: #429621, #422920)
   * Restrict the architecture building to: amd64, i386, powerpc, sparc
 
- -- Otavio Salvador <otavio@ossystems.com.br>  Sun, 08 Jul 2007 19:54:49 -0300
+ -- Otavio Salvador <otavio@ossystems.com.br>  Sun, 08 Jul 2007 19:59:06 -0300
 
 usplash (0.5.2-2) unstable; urgency=low
 

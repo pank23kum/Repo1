@@ -107,7 +107,7 @@ log_end_msg () {
         fi
     fi
 
-    if [ "$COL" ] && [ -x "$TPUT" ]; then
+    if [ "${COL:-}" ] && [ -x "${TPUT:-}" ]; then
         printf "\r"
         $TPUT hpa $COL
         if [ "$1" -eq 0 ]; then

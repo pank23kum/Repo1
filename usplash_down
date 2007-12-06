@@ -14,7 +14,7 @@ for x in $(cat /proc/cmdline); do
         esac
 done
 
-[ "$SPLASH" != "true" ] && exit 1
+[ "$SPLASH" != "true" ] || pidof usplash >/dev/null && exit 1
 
 [ -f /etc/usplash.conf ] && . /etc/usplash.conf
 
@@ -34,6 +34,10 @@ if [ "$xres" ] && [ "$xres" != 0 ] && [ "$yres" ] && [ "$yres" != 0 ]; then
 else
 	/sbin/usplash -c $varg &
 fi
+
+# Append our PID to the list of processes that sendsigs won't kill,
+# to avoid flicker on shutdown:
+echo $! >> /var/run/sendsigs.omit
 
 # Sleep hack to wait for us to be ready, only needed until usplash/bogl
 # can be properly daemonised:

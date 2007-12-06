@@ -1,8 +1,10 @@
 usplash (0.5.8-1) unstable; urgency=low
 
-  * Ubuntu sync, minus lpia and build-dep. (closes: 445885)
+  * Ubuntu sync, minus lpia and build-dep. (closes: #445885, #453796, #453847)
+  * lsb-base-logging.sh: Fix unbound access. (closes: #432948)
+    Thanks "James Youngman" <jay@gnu.org> for patch.
 
- -- maximilian attems <maks@debian.org>  Thu, 06 Dec 2007 22:04:29 +0100
+ -- maximilian attems <maks@debian.org>  Thu, 06 Dec 2007 22:33:44 +0100
 
 usplash (0.5.2-3) unstable; urgency=low
 

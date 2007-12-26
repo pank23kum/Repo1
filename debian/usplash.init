@@ -47,7 +47,7 @@ usplash_quit() {
 	if type setupcon >/dev/null 2>&1; then
 	    CONSOLE_SCREEN=
 	elif [ -x /etc/init.d/console-screen.sh ]; then
-	    CONSOLE_SCREEN=/etc/init.d/console-screen.sh
+	    CONSOLE_SCREEN="/etc/init.d/console-screen.sh start"
 	else
 	    CONSOLE_SCREEN=
 	fi

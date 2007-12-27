@@ -1,3 +1,24 @@
+usplash (0.5.8-2) experimental; urgency=low
+
+  [ Otavio Salvador ]
+  * Use the new sysvinit API for splash handling and drop the lsb based
+    one.
+  * Use the now supported Vcs-{Git,Browser} fields.
+  * Bump standards-version to 3.7.3 (no changes needed).
+  * Conflicts with sysvinit (<< 2.86.ds1-39) since we now use the
+    provided API.
+
+  [ Petter Reinholdtsen ]
+  * splash-functions: testing fixups
+
+  [ maximilian attems ]
+  * usplash.init: Call console-screen.sh with start arg (closes: #457655)
+  * splash-functions: small coding style fixups.
+  * usplash_write.8: Comment out unimplemented TIMEOUT feature.
+  * debian/rules: kill lpia arch mismerge addition.
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Thu, 27 Dec 2007 21:41:53 -0200
+
 usplash (0.5.8-1) unstable; urgency=low
 
   * Ubuntu sync, minus lpia and build-dep. (closes: #445885, #453796, #453847)

@@ -17,7 +17,7 @@ else
 	CFLAGS += -Os
 endif
 
-ifeq ($(DEB_HOST_ARCH), $(findstring $(DEB_HOST_ARCH),i386 amd64 lpia))
+ifeq ($(DEB_HOST_ARCH), $(findstring $(DEB_HOST_ARCH),i386 amd64))
 	BACKEND = "BACKEND=svga"
 else
 	BACKEND =

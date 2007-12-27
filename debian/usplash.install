@@ -5,3 +5,5 @@ usr/sbin/update-usplash-theme
 usr/share/initramfs-tools/hooks/usplash
 usr/share/initramfs-tools/scripts/init-top/usplash
 ../usplash.py /usr/share/apport/package-hooks/
+
+../splash-functions /lib/init/

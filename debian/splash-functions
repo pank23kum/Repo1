@@ -15,7 +15,7 @@ splash_running()
 	return 1
 }
 
-splash_stop ()
+splash_stop()
 {
 	local i
 
@@ -29,31 +29,31 @@ splash_stop ()
 			kill -9 $(pidof usplash)
 			break
 		fi
-		sleep 1
+		sleep 0.1
 	done
 	return 0
 }
 
-splash_start ()
+splash_start()
 {
 	if splash_running; then
 		return 0
 	elif [ ! -x /sbin/usplash ] || [ ! -x /sbin/usplash_down ]; then
 		return 1
-	else
-		/sbin/usplash_down || return 1
-		return 0
 	fi
+
+	/sbin/usplash_down || return 1
+	return 0
 }
 
-custom_splash_progress ()
+custom_splash_progress()
 {
 	splash_running || return 0
 	/sbin/usplash_write "PROGRESS $1" || return 1
 	return 0
 }
 
-splash_start_indefinite ()
+splash_start_indefinite()
 {
 	splash_running || return 0
 	/sbin/usplash_write "TIMEOUT 0" || return 1
@@ -61,7 +61,7 @@ splash_start_indefinite ()
 	return 0
 }
 
-splash_stop_indefinite ()
+splash_stop_indefinite()
 {
 	splash_running || return 0
 	/sbin/usplash_write "CLEAR" || return 1
@@ -69,7 +69,7 @@ splash_stop_indefinite ()
 	return 0
 }
 
-splash_user_input ()
+splash_user_input()
 {
 	splash_running || return 1
 	[ -p /dev/.initramfs/usplash_outfifo ] || return 1

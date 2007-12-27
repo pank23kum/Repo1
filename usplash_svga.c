@@ -199,7 +199,10 @@ void usplash_svga_text(int x, int y, const char *s, int len, int fg,
 			/* Plot */
 			for (j = 0; j < width; j++) {
 				if (c & (1 << (32 - j)))
-					gl_setpixel(x + j, y + i, fg);
+                                        if (bpp == 8)
+                                                gl_setpixel(x + j, y + i, fg);
+                                        else
+                                                gl_setpixelrgb(x + j, y + i, vesa_palette[fg].red, vesa_palette[fg].green, vesa_palette[fg].blue);
 			}
 		}
 		x += width;

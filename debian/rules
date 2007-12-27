@@ -17,7 +17,7 @@ else
 	CFLAGS += -Os
 endif
 
-ifeq ($(DEB_HOST_ARCH), $(findstring $(DEB_HOST_ARCH),i386 amd64))
+ifeq ($(DEB_HOST_ARCH), $(findstring $(DEB_HOST_ARCH),i386 amd64 lpia))
 	BACKEND = "BACKEND=svga"
 else
 	BACKEND =
@@ -68,6 +68,7 @@ binary-arch: build install
 	dh_compress -X example
 	dh_fixperms
 	dh_installdeb
+	dh_makeshlibs
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums

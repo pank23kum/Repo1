@@ -1,3 +1,52 @@
+usplash (0.5.8) hardy; urgency=low
+
+  * Set the usplash progress bar to pulsating after starting in the
+    initramfs; we have a random number of steps that will take a random
+    amount of time, it makes no sense to fake progress.  LP: #162397.
+
+ -- Scott James Remnant <scott@ubuntu.com>  Tue, 13 Nov 2007 20:44:12 +0000
+
+usplash (0.5.7) gutsy; urgency=low
+
+  * usplash_svga.c, usplash_svga_text(): When running in 16bpp mode,
+    calling gl_setpixel() (which takes a palette index) does not make sense,
+    since we never set a palette (this happens only in 8bpp modes). Use
+    gl_setpixelrgb() in 16bpp mode and look up the RGB values from
+    vesa_palette, which is initialized from the theme. 
+
+    This repairs operation on i386 and amd4 where SGVA is used, so that text
+    appears in the color set by the theme, instead of being fixed to dark blue.
+    (LP: #64408)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 15 Oct 2007 11:22:21 +0200
+
+usplash (0.5.6) gutsy; urgency=low
+
+  * Add dh_makeshlibs call to debian/rules.
+
+ -- Tollef Fog Heen <tfheen@ubuntu.com>  Mon, 01 Oct 2007 11:43:19 +0200
+
+usplash (0.5.5) gutsy; urgency=low
+
+  * Make the build behave the same on lpia as it does on i386 and amd64.
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Tue, 14 Aug 2007 02:11:43 +1000
+
+usplash (0.5.4) gutsy; urgency=low
+
+  * debian/control: libgd2-*-dev no longer provide libgd2-dev, but
+    rather libgd-dev; adjust build-dependencies accordingly.
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Tue,  7 Aug 2007 11:35:20 +1000
+
+usplash (0.5.3) gutsy; urgency=low
+
+  * usplash_down: Write our PID to /var/run/sendsigs.omit, so the new
+    sysvinit/killall5 won't kill us on shutdown, and we don't flicker.
+  * usplash_down: Exit if we're already running, one usplash is enough.
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Tue,  7 Aug 2007 04:18:58 +1000
+
 usplash (0.5.2) gutsy; urgency=low
 
   * Don't break on purge if /etc/usplash.conf doesn't exist (e.g. usplash

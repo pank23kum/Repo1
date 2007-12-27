@@ -50,4 +50,5 @@ if [ $SPLASH = "true" ]; then
 		/sbin/usplash -c $varg &
 	fi
 	sleep 1
+	/sbin/usplash_write "PULSATE"
 fi

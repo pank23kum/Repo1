@@ -6,4 +6,5 @@ usr/share/initramfs-tools/hooks/usplash
 usr/share/initramfs-tools/scripts/init-top/usplash
 ../usplash.py /usr/share/apport/package-hooks/
 
+../lsb-base-logging.sh /etc/
 ../splash-functions /lib/init/

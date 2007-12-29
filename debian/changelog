@@ -1,3 +1,11 @@
+usplash (0.5.8-3) unstable; urgency=low
+
+  * Add back lsb-base-logging.sh since it's need to show boot progress
+  * Revert the conflicts with sysvinit since we are compatible with
+    previous sysvinit
+
+ -- Otavio Salvador <otavio@ossystems.com.br>  Sat, 29 Dec 2007 21:45:51 -0200
+
 usplash (0.5.8-2) experimental; urgency=low
 
   [ Otavio Salvador ]

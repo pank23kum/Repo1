@@ -81,9 +81,46 @@ Works in the same way as INPUT above with the exception that nothing is
 echoed to the console.
 Useful for "Press enter to reboot".
 .\"
+.TP
+.BI INPUTTIMEOUT " timeout prompt"
+Works in the same way as INPUT above, but returns the empty string
+after the given number of deciseconds. 
+.\"
+.TP
+.BI INPUTCHAR
+Checks for a single pending key press and writes the character to
+/dev/.initramfs/usplash_outfifo. If no key was pressed, this will be
+an empty string. Useful for polling for input (such as "Press ESC to
+skip") while doing something in the background (such as running fsck).
+.\"
+.TP
+.BI VERBOSE " mode"
+Changes verbosity at runtime. Possible values for
+.I mode
+are
+.B on
+or
+.B true
+for verbose mode,
+.B off
+or
+.B false
+for quiet mode,
+or
+.B default
+for the default mode when usplash started.
+
+.\"
 .SH EXIT STATUS
 .B usplash_write
-always returns an exit status of zero.
+always returns an exit status of zero by default.
+
+However, if the environment variable
+.B FAIL_NO_USPLASH
+is set, then failure to open the usplash fifo (which usually means
+that usplash is not running) will exit with 1. This can be tested
+before reading something from the FIFO (which would wait forever).
+
 .\"
 .SH AUTHOR
 Written by Matthew Garrett <mjg59@srcf.ucam.org>

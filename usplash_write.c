@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <limits.h>
 
 #include "usplash.h"
 
@@ -52,13 +53,24 @@ int main(int argc, char *argv[])
 	if (fifo_fd < 0) {
 		if ((errno != ENXIO) && (errno != ENOENT))
 			perror("open");
-		exit(0);
+		exit(getenv("FAIL_NO_USPLASH") ? 1 : 0);
 	}
 
 	for (i = 1; i < argc; i++) {
+		size_t argsize;
 		ssize_t len;
 
-		len = write(fifo_fd, argv[i], strlen(argv[i]) + 1);
+		/*
+		 * POSIX says writes to a fifo larger than PIPE_BUF could
+		 * get interleaved, so we must truncate those.
+		 */
+		argsize = strlen(argv[i]);
+		if (argsize + 1 > PIPE_BUF) {
+			argsize = PIPE_BUF - 1;
+			argv[i][argsize] = '\0';
+		}
+		
+		len = write(fifo_fd, argv[i], argsize + 1);
 		if (len < 0) {
 			perror("write");
 			exit(0);

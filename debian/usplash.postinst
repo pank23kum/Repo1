@@ -36,18 +36,25 @@ update_initramfs()
 setup_usplash_config()
 {
 	if [ ! -f /etc/usplash.conf ]; then
+		echo "# Usplash configuration file" >/etc/usplash.conf
+		echo "# These parameters will only apply after running update-initramfs." >>/etc/usplash.conf
+		echo "" >>/etc/usplash.conf
 		db_version 2.0
+		x=
+		y=
 		if db_get xserver-xorg/config/display/modes; then
 			FIRSTVAL=`echo $RET | sed 's/,.*//'`
 			x=`echo $FIRSTVAL | sed 's/x.*//'`
 			y=`echo $FIRSTVAL | sed 's/.*x//'`
-		else
-			x=640
-			y=480
+		elif [ "$DISPLAY" ] && which xdpyinfo >/dev/null 2>&1 && \
+		     dimensions="$(xdpyinfo | perl -nle 'if (/^\s*dimensions:\s*(\d+x\d+)/) { print $1; exit }')"; then
+			x="${dimensions%%x*}"
+			y="${dimensions#*x}"
 		fi
-		echo "# Usplash configuration file" >/etc/usplash.conf
-		echo "xres=$x" >>/etc/usplash.conf
-		echo "yres=$y" >>/etc/usplash.conf
+		if [ "$x" ] && [ "$y" ]; then
+			echo "xres=$x" >>/etc/usplash.conf
+			echo "yres=$y" >>/etc/usplash.conf
+		fi
 	fi
 }
 

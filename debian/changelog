@@ -1,3 +1,9 @@
+usplash (0.5.19-1) UNRELEASED; urgency=low
+
+  * New upstream release (closes: #442881)
+
+ -- maximilian attems <maks@debian.org>  Sun, 04 May 2008 22:46:05 +0200
+
 usplash (0.5.8-3) unstable; urgency=low
 
   * Add back lsb-base-logging.sh since it's need to show boot progress

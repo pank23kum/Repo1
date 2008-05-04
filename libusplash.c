@@ -45,6 +45,9 @@
 #include <unistd.h>
 #include <assert.h>
 #include <signal.h>
+#include <poll.h>
+#include <termios.h>
+#include <time.h>
 
 #include "usplash_backend.h"
 #include "usplash_bogl_backend.h"
@@ -60,6 +63,7 @@ sigset_t sigs;
 
 /* Prototypes of non-static functions */
 void switch_console(int vt, int vt_fd);
+void flush_stdin();
 
 void clear_screen(void);
 
@@ -69,7 +73,12 @@ void draw_progressbar(int percentage);
 void clear_text(void);
 void draw_text(const char *string, size_t len);
 void draw_status(const char *string, size_t len, int mode);
+
 int handle_input(const char *string, size_t len, int quiet);
+int handle_timeout_input(const char *string, size_t len, int quiet,int timeout);
+
+int handle_input_char();
+int handle_verbose(int mode);
 
 /* Helpers for video implementations */
 void usplash_restore_console(void);
@@ -121,6 +130,7 @@ static int timeout = 15;
 
 /* Are we verbose or not? */
 static int verbose = 0;
+static int verbose_default = 0;
 
 /* /dev/console */
 static int console_fd = -1;
@@ -439,6 +449,7 @@ int usplash_setup(int xres, int yres, int v)
 	ensure_console();
 
 	verbose = v;
+        verbose_default = verbose;
 	theme_handle = dlopen(USPLASH_THEME, RTLD_LAZY);
 	if (theme_handle) {
 		theme = dlsym(theme_handle, "usplash_theme");
@@ -708,16 +719,82 @@ void draw_text(const char *string, size_t len)
 	unblocksig();
 }
 
-int usplash_get_string(char *inputbuf, int length, int quiet)
+void flush_stdin()
+{
+	struct pollfd input_fd = {
+		.fd = STDIN_FILENO,
+		.events = POLLIN,
+	};
+
+	while( poll( &input_fd, 1 , 100) > 0 )
+                getchar();
+}
+
+char get_timeout_char(int inputtimeout)
+{
+	char charinput = -1;
+	int old_flags,retval;
+	struct pollfd input_fd = {
+		.fd = STDIN_FILENO,
+		.events = POLLIN,
+	};
+        struct termios t;
+
+        /* configure unbuffered input */
+        tcgetattr(STDIN_FILENO, &t);
+        t.c_cc[VMIN] = 0;
+        t.c_cc[VTIME] = 0;
+        t.c_lflag &= ~ICANON;
+        tcsetattr(STDIN_FILENO, TCSANOW, &t);
+
+	while( inputtimeout )
+	{
+		blocksig();
+		if( poll( &input_fd, 1 , 100) > 0 )
+		{
+			if( read(STDIN_FILENO,&charinput,1) < 0 )
+				charinput = '\0';
+			inputtimeout = 1; // like "break", but unblocksig-safe
+		}
+		unblocksig();
+		inputtimeout--;
+	}
+	return charinput;
+}
+
+
+int usplash_timeout_get_string(char *inputbuf, int length, int quiet,int inputtimeout)
 {
 	char input;
 	int i;
 	
 	/* Get user input */
 	for (i = 0; i < length - 1; i++) {
-		input = getchar();
+		if( inputtimeout == -1 )
+			input = getchar();
+		else{
+			input = get_timeout_char(inputtimeout);
+                        if ( input == -1 )
+                                break;
+                }
 		if (input == '\n' || input == '\r' || input == '\0')
 			break;
+
+                /* backspace */
+                if (input == '\x7F') {
+                    if (i > 0) {
+                            int p, w;
+
+                            w = usplash_getfontwidth(quiet == 1 ? '*' : inputbuf[i-1]);
+                            text_position -= w;
+                            p = text_position;
+                            draw_chars("  ", 2);
+                            text_position = p;
+                            --i;
+                    }
+                    --i;
+                    continue;
+                }
 		
 		if (quiet == 2) {
 			i--;
@@ -737,6 +814,43 @@ int usplash_get_string(char *inputbuf, int length, int quiet)
 
 int handle_input(const char *string, const size_t len, const int quiet)
 {
+	return handle_timeout_input(string,len,quiet,-1);
+}
+
+static int _open_out_fifo()
+{
+	int fifo_fd = -1;
+	int sec;
+	int deci;
+	struct timespec needed;
+	struct timespec remaining;
+
+	/* We wait for timeout seconds for someone to read the user input */
+	for (sec = 0; timeout == 0 || sec < timeout; sec++) {
+		/* allow deci-second precision to avoid visible delays */
+		for (deci = 0; deci < 10; deci++) {
+			needed.tv_sec = 0;
+			needed.tv_nsec = 100000000;
+			fifo_fd = open(USPLASH_OUTFIFO, O_WRONLY | O_NONBLOCK);
+			if (fifo_fd < 0) {
+				/* protect ourselves from signals */
+				while (nanosleep(&needed,&remaining) < 0) {
+					if (errno != EINTR)
+						return -1;
+					needed = remaining;
+				}
+			}
+			else
+				return fifo_fd;
+		}
+	}
+
+	return fifo_fd;
+}
+
+/* handle input with a timeout in seconds. timeout = -1 means no timeout */
+int handle_timeout_input(const char *string, const size_t len, const int quiet,int inputtimeout)
+{
 	int i;
 	ssize_t wlen;
 	int fifo_outfd = -1;
@@ -755,20 +869,13 @@ int handle_input(const char *string, const size_t len, const int quiet)
 	draw_text(string, len);
 
 	/* Get the user input */
-	usplash_get_string(inputbuf, PIPE_BUF, quiet);
+	usplash_timeout_get_string(inputbuf, PIPE_BUF, quiet,inputtimeout);
 
 	/* Reset the verbose flag */
 	if (reset_verbose)
 		verbose = 0;
 
-	/* We wait for timeout seconds for someone to read the user input */
-	for (i = 1; i != timeout + 1; i++) {
-		fifo_outfd = open(USPLASH_OUTFIFO, O_WRONLY | O_NONBLOCK);
-		if (fifo_outfd < 0)
-			sleep(1);
-		else
-			break;
-	}
+	fifo_outfd = _open_out_fifo();
 
 	if (fifo_outfd < 0) {
 		err = 1;
@@ -784,6 +891,55 @@ out:
 		close(fifo_outfd);
 	memset(inputbuf, 0, PIPE_BUF);
 	return err;
+}
+
+/* Non-blocking check for a single character key press; Return ASCII code to
+ * FIFO, or an empty string if there is no pending key press. */
+int handle_input_char()
+{
+        char ch;
+	int fifo_outfd = -1;
+        int i;
+	int err = 0;
+
+        ch = get_timeout_char(1);
+
+	fifo_outfd = _open_out_fifo();
+
+	if (fifo_outfd < 0) {
+		err = 1;
+		goto out;
+	}
+
+        if (ch != -1 && ch != '\0')
+            if (write(fifo_outfd, &ch, 1) < 1)
+		err = 1;
+
+out:
+	if (fifo_outfd >= 0)
+		close(fifo_outfd);
+	return err;
+}
+
+int handle_verbose (int mode)
+{
+    int err = 0;
+    switch(mode) {
+        case 2:
+            verbose = verbose_default;
+            break;
+        case 1:
+            verbose = 1;
+            break;
+        case 0:
+            verbose = 0;
+            break;
+        default:
+            fprintf(stderr, "usplash: invalid verbosity mode %si\n", mode);
+            err = 1;
+    }
+
+    return err;
 }
 
 void draw_status(const char *string, size_t len, int mode)

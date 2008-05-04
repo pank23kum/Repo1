@@ -37,6 +37,7 @@
 #include <assert.h>
 #include <signal.h>
 #include <errno.h>
+#include <limits.h>
 
 #include "usplash_backend.h"
 #include "usplash.h"
@@ -109,7 +110,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	fifo_fd = open(USPLASH_FIFO, O_RDONLY | O_NONBLOCK);
+	/* open as writable too so that select() never sees EOF */
+	fifo_fd = open(USPLASH_FIFO, O_RDWR | O_NONBLOCK);
 	if (fifo_fd < 0) {
 		perror("open");
 		ret = 2;
@@ -125,6 +127,7 @@ int main(int argc, char *argv[])
 	signal(SIGALRM, do_animate);
 	setitimer(ITIMER_REAL, &iv, NULL);
 
+        flush_stdin();
 	clear_screen();
 	clear_progressbar();
 	clear_text();
@@ -160,7 +163,7 @@ static int main_loop(void)
 		FD_ZERO(&rfds);
 		FD_SET(fifo_fd, &rfds);
 
-		tv.tv_sec = timeout;
+		tv.tv_sec = timeout ? timeout : 1;
 		tv.tv_usec = 0;
 
 		retval = select(fifo_fd + 1, &rfds, NULL, NULL, &tv);
@@ -171,7 +174,7 @@ static int main_loop(void)
 		} else if (retval < 0 && errno == EINTR) {
 			/* Count cycles for timeout */
 			cycles++;
-			if (cycles >= cycle_timeout)
+			if (cycle_timeout && cycles >= cycle_timeout)
 				return 0;
 		} else if (retval > 0) {
 			/* Data available */
@@ -189,30 +192,34 @@ static int main_loop(void)
 
 static int read_command(void)
 {
-	static char buf[4096], *ptr;
+	static char buf[PIPE_BUF], *ptr;
 	static size_t buflen;
 	static ssize_t len;
 
 	len = read(fifo_fd, buf + buflen, sizeof(buf) - buflen);
 	if (len < 0) {
-		if (errno != EAGAIN) {
+		/*
+		 * EAGAIN is allowed due to O_NONBLOCK
+		 * EINTR is allowed in the case of signal delivery
+		 */
+		if (errno != EAGAIN && errno != EINTR) {
 			/* Try opening again */
 			close(fifo_fd);
 			fifo_fd =
-			    open(USPLASH_FIFO, O_RDONLY | O_NONBLOCK);
+			    open(USPLASH_FIFO, O_RDWR | O_NONBLOCK);
 			if (fifo_fd < 0)
 				return 2;
 		}
 
 		return 0;
 	} else if (len == 0) {
-		/* Reopen to see if there's anything more for us */
-		close(fifo_fd);
-		fifo_fd = open(USPLASH_FIFO, O_RDONLY | O_NONBLOCK);
-		if (fifo_fd < 0)
-			return 2;
-
-		return 0;
+		/*
+		 * 0 length return on an O_NONBLOCK fifo means there are
+		 * no more writers.  This should never happen since we our
+		 * ourselves a writer (so select doesn't spam us when there
+		 * are no other writers).
+		 */
+		return 2;
 	}
 
 	buflen += len;
@@ -287,6 +294,29 @@ static int parse_command(const char *string, size_t len)
 
 	} else if (!strncmp(command, "INPUTENTER", commandlen)) {
 		return handle_input(string, len, 2);
+	} else if (!strncmp(command, "INPUTTIMEOUT", commandlen)) {
+		int inputtimeout;
+		commandlen = strncspn(string, len, " ");
+		if (string[commandlen] == ' '){
+			inputtimeout = atoi(string);
+			string += commandlen + 1;
+                        len -= commandlen + 1;
+		}
+		else
+			inputtimeout = -1;
+		return handle_timeout_input(string, len, 0, inputtimeout);
+
+	} else if (!strncmp(command, "INPUTCHAR", commandlen)) {
+                return handle_input_char();
+
+	} else if (!strncmp(command, "VERBOSE", commandlen)) {
+                if (!strncasecmp(string, "default", len))
+                    return handle_verbose(2);
+                else if (!strncasecmp(string, "on", len) || !strncasecmp(string,
+                    "true", len) || !strncmp(string, "1", len))
+                    return handle_verbose(1);
+                else
+                    return handle_verbose(0);
 	}
 
 	return 0;

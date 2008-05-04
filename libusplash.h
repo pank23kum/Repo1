@@ -18,6 +18,7 @@
  */
 
 void switch_console(int vt, int vt_fd);
+void flush_stdin();
 
 void clear_screen(void);
 
@@ -33,6 +34,9 @@ void animate_step(int pulsating);
 int usplash_setup(int xres, int yres, int verbose);
 int strncspn(const char *s, size_t n, const char *reject);
 int handle_input(const char *string, size_t len, int quiet);
+int handle_timeout_input(const char *string, size_t len, int quiet,int timeout);
+int handle_input_char();
+int handle_verbose(int mode);
 int usplash_get_string (char *buf, int length, int quiet);
 
 extern struct usplash_theme testcard_theme;

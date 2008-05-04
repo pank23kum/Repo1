@@ -3,8 +3,8 @@ Priority: optional
 Section: misc
 Maintainer: Matthew Garrett <mjg59@srcf.ucam.org>
 Standards-Version: 3.6.2.1
-Build-Depends: debhelper (>= 5.0.0), libgd-dev, libpng-dev, libx86-dev [amd64 i386 lpia]
-XS-Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/usplash/ubuntu
+Build-Depends: debhelper (>= 5.0.0), libgd2-xpm-dev, libpng-dev, libx86-dev [amd64 i386 lpia]
+Vcs-Bzr: http://bazaar.launchpad.net/~ubuntu-core-dev/usplash/ubuntu
 
 Package: usplash
 Architecture: any

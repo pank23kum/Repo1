@@ -1,3 +1,118 @@
+usplash (0.5.19) hardy; urgency=low
+
+  * debian/usplash.postinst: Add instructions about update-initramfs in
+    usplash configuration file /etc/usplash.conf (LP: #206064).
+
+ -- Saïvann Carignan <oxmosys@gmail.com>  Mon, 31 Mar 2008 01:43:39 -0400
+
+usplash (0.5.18) hardy; urgency=low
+
+  * Let usplash use the minimum mode in the theme if we don't know the
+    correct modes, rather than forcing 640x480.
+  * Fetch modes from the current display if we're being configured within X
+    (works around LP #188764).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Sun, 30 Mar 2008 22:43:16 +0100
+
+usplash (0.5.17) hardy; urgency=low
+
+  * usplash_write.c: On ENXIO (i. e. unable to open the FIFO because usplash
+    is not running), exit with 1 instead of 0 if the environment variable
+    FAIL_NO_USPLASH is set. This keeps backwards compatibility with earlier
+    versions, but allows us to check for broken usplash in scripts without
+    spinning in "read" commands on the usplash outfifo forever.
+  * usplash_write.8: Document FAIL_NO_USPLASH.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 26 Mar 2008 13:33:29 +0100
+
+usplash (0.5.16) hardy; urgency=low
+
+  * libusplash.c: INPUTCHAR did not sleep correctly due to animation
+    signals (LP: #194017).
+  * libusplash.c: get_timeout_char() was not re-enabling signals.
+  * usplash.c, usplash_write.c: removed command data-loss race introduced by
+    needless re-opening of input fifo (LP: #200299).
+  * usplash.c: "TIMEOUT 0" was causing 100% CPU in select with timeout of 0.
+
+ -- Kees Cook <kees@ubuntu.com>  Sun, 09 Mar 2008 14:16:06 -0700
+
+usplash (0.5.15) hardy; urgency=low
+
+  * Bump shlibs for libusplash0 to fix forward compatibility with new
+    features.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 18 Feb 2008 19:04:57 +0100
+
+usplash (0.5.14) hardy; urgency=low
+
+  * libusplash.c, get_timeout_key(): Mangle terminal settings for
+    unbuffered input, so that INPUTCHAR also works when usplash is started
+    from initramfs.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Wed, 13 Feb 2008 10:58:25 +0100
+
+usplash (0.5.13) hardy; urgency=low
+
+  * Add new command "VERBOSE" to change verbosity at runtime ("on", "off",
+    "default").
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Feb 2008 12:52:54 +0100
+
+usplash (0.5.12) hardy; urgency=low
+
+  * Add new command "INPUTCHAR" which checks for a pending key press and
+    reports it to the FIFO (empty string if no key was pressed). This is
+    better than INPUTTIMEOUT for implementing things like "Press ESC to skip
+    this step" after all. Documented the command in the manpage.
+  * libusplash.[hc]: Add flush_stdin() to clear stdin. Call it on usplash
+    startup in main(), which fixes getting random key presses when calling
+    usplash in a running system.
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Tue, 12 Feb 2008 11:25:48 +0100
+
+usplash (0.5.11) hardy; urgency=low
+
+  * libusplash.c, usplash_timeout_get_string(): Fix wrong and confusing
+    indentation.
+  * usplash.c: Fix argument parsing for INPUTTIMEOUT (off-by-one error, and
+    wrong string length).
+  * libusplash.c, usplash_timeout_get_string(): If no char was entered during
+    timeout, return an empty string instead of poking a 0 into random memory
+    and returning a random string.
+  * libusplash.c, handle_timeout_input(): Always output the string to the
+    output FIFO, even if input timed out and the string is empty. Otherwise
+    the usplash client cannot know whether it should starve and die waiting
+    for the reading FIFO or not listen to it and let usplash starve and die
+    for writing the FIFO.
+  * libusplash.c: Interpret INPUTTIMEOUT value as deciseconds instead of
+    seconds. This makes it much more useful for polling for input while doing
+    something in the background.
+  * usplash_write.8: Add documentation for INPUTTIMEOUT.
+  * libusplash.c, usplash_timeout_get_string(): Handle backspace properly.
+    (LP: #163793)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 11 Feb 2008 18:06:37 +0100
+
+usplash (0.5.10) hardy; urgency=low
+
+  * usplash.c,libusplash.c,libusplash.h: added command INPUTTIMEOUT.
+    LP: #152952
+
+ -- Andrea Gasparini <gaspa@yattaweb.it>  Thu, 18 Oct 2007 17:12:39 +0200
+
+usplash (0.5.9) hardy; urgency=low
+
+  [ Colin Watson ]
+  * Vcs-Bzr is now an official field.
+
+  [ Martin Pitt ]
+  * Fix "TIMEOUT 0" to actually wait forever instead of not at all. Thanks to
+    Andrea Gasparini! (LP: #152933)
+  * Fixed build-dependency: libgd-dev → libgd2-xpm-dev. Thanks to Andrea
+    again. (LP: #154234)
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 11 Jan 2008 09:27:28 +0100
+
 usplash (0.5.8) hardy; urgency=low
 
   * Set the usplash progress bar to pulsating after starting in the

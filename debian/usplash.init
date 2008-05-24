@@ -102,6 +102,8 @@ case "$1" in
 	    splash_start
 	    splash_stop_indefinite
 	fi
+	mkdir -p /lib/init/rw/sendsigs.omit.d
+	pidof usplash > /lib/init/rw/sendsigs.omit.d/usplash
 	;;
   *)
 	N=/etc/init.d/$NAME

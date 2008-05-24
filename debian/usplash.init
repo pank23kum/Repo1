@@ -32,6 +32,8 @@ DESC="Userspace bootsplash utility"
 
 test -x $DAEMON || exit 0
 
+. /lib/init/splash-functions
+
 set -e
 
 usplash_quit() {
@@ -85,8 +87,20 @@ case "$1" in
 	usplash_quit
 	;;
   stop)
-	if grep -q splash /proc/cmdline; then
-		usplash_write "TIMEOUT 15"
+	SPLASH=true
+	if [ -f /proc/cmdline ] ; then
+	    for x in $(cat /proc/cmdline); do
+		case $x in
+		    nosplash*)
+			SPLASH=false
+			;;
+		esac
+	    done
+	fi
+
+	if [ "$SPLASH" = "true" ] ; then
+	    splash_start
+	    splash_stop_indefinite
 	fi
 	;;
   *)

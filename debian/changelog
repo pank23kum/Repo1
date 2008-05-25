@@ -1,3 +1,12 @@
+usplash (0.5.19-2) unstable; urgency=low
+
+  [ Petter Reinholdtsen ]
+  * usplash: should use omitpit feature to avoid getting killed by
+    sendsigs
+  * usplash: starts too late in the shutdown sequence
+
+ -- maximilian attems <maks@debian.org>  Sat, 24 May 2008 22:05:34 +0200
+
 usplash (0.5.19-1) unstable; urgency=low
 
   * New upstream release (closes: #442881)
